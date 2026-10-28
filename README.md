@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🌱 Eco Club — ABES Engineering College, Ghaziabad
 
 > **"THINK · ACT · CODE · WORK GREENER"**  
@@ -239,3 +240,7 @@ Before final club launch, update these placeholders:
 - [ ] **Footer Credits**: Verify phrasing with Tech Head in `src/data/config.js`.
 - [ ] **Impact Figures**: Replace sample numbers with annual audited figures in `src/data/stats.js`.
 - [ ] **Real Photos**: Swap SVG placeholders in `/public/assets/gallery/` with high-res event photography.
+=======
+# ECO-club-website
+The official website of the Eco Club at ABES Engineering College
+>>>>>>> 31b620545bb36288b61ae7e03bf01a3a6448ff3a
