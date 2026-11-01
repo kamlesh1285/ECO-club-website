@@ -1,17 +1,16 @@
 import React from 'react';
-import { AlertCircle } from 'lucide-react';
 
-export default function SampleBadge({ text = "Sample Data — To be replaced with real data", dark = false }) {
+export default function SampleBadge({ text = "Sample", dark = false }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium rounded-full border transition-all ${
+      className={`inline-flex items-center px-2.5 py-0.5 text-xs font-mono font-semibold rounded-full border transition-all select-none ${
         dark
-          ? "bg-forest-surface/80 text-lime border-lime/30 shadow-[0_0_12px_rgba(183,243,74,0.15)]"
+          ? "bg-forest-surface text-lime border-lime/30 shadow-[0_0_10px_rgba(183,243,74,0.15)]"
           : "bg-emerald-50 text-leaf-dark border-emerald-200"
       }`}
-      title="This content is sample demonstration data as permitted by assignment guidelines."
+      title="Sample illustration content for preview"
     >
-      <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+      <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80" />
       <span>{text}</span>
     </span>
   );

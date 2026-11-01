@@ -12,16 +12,13 @@ export default function Announcements() {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-4">
         {/* Ticker Title Badge */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-lime/15 border border-lime/30 text-lime text-xs font-mono font-bold uppercase tracking-wider">
             <Volume2 className="w-3.5 h-3.5 animate-pulse" />
             <span>Updates</span>
           </div>
-          <span className="hidden sm:inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
-            Sample Ticker
-          </span>
         </div>
 
         {/* Marquee Track */}

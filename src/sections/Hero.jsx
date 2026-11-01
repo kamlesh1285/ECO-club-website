@@ -1,20 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowDown, Sparkles, ChevronRight, Terminal, Globe } from 'lucide-react';
+import { Sparkles, ChevronRight, Terminal, Globe } from 'lucide-react';
 import { siteConfig } from '../data/config';
 
 export default function Hero() {
+  const heroRef = useRef(null);
   const canvasRef = useRef(null);
   const [typewriterIndex, setTypewriterIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Typewriter effect
+  // Typewriter effect rotating motive & tagline phrases
   useEffect(() => {
     const phrases = siteConfig.rotatingTypewriter;
     const fullText = phrases[typewriterIndex % phrases.length];
     
-    const typingSpeed = isDeleting ? 40 : 80;
-    const pauseDelay = isDeleting ? 300 : 1800;
+    const typingSpeed = isDeleting ? 35 : 75;
+    const pauseDelay = isDeleting ? 250 : 2000;
 
     const timer = setTimeout(() => {
       if (!isDeleting && currentText === fullText) {
@@ -33,12 +34,19 @@ export default function Hero() {
     return () => clearTimeout(timer);
   }, [currentText, isDeleting, typewriterIndex]);
 
-  // Circuit & Leaf Canvas Animation
+  // Circuit & Leaf Canvas Animation with 60% mobile reduction and tab-pause
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let animationFrameId;
+    let isPaused = false;
+
+    // Check reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      return;
+    }
 
     let width = (canvas.width = canvas.parentElement.offsetWidth);
     let height = (canvas.height = canvas.parentElement.offsetHeight);
@@ -50,19 +58,40 @@ export default function Hero() {
     };
     window.addEventListener('resize', handleResize);
 
-    // Particle nodes
-    const particleCount = Math.min(Math.floor((width * height) / 14000), 55);
-    const particles = [];
+    // Visibility & Intersection Observers to pause animation when hidden
+    const handleVisibilityChange = () => {
+      isPaused = document.hidden;
+      if (!isPaused) {
+        render();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
+    const observer = new IntersectionObserver(([entry]) => {
+      isPaused = !entry.isIntersecting;
+      if (!isPaused) {
+        render();
+      }
+    }, { threshold: 0.1 });
+
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+
+    // Particle nodes calculation (~60% reduction on screens under 768px)
+    const isMobile = window.innerWidth < 768;
+    const baseCount = Math.min(Math.floor((width * height) / 16000), 45);
+    const particleCount = isMobile ? Math.max(Math.floor(baseCount * 0.4), 8) : baseCount;
+
+    const particles = [];
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
-        radius: Math.random() * 2.2 + 1.2,
-        isLeafNode: Math.random() > 0.45,
-        pulseOffset: Math.random() * Math.PI * 2
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 2 + 1.2,
+        isLeafNode: Math.random() > 0.45
       });
     }
 
@@ -81,21 +110,21 @@ export default function Hero() {
     canvas.parentElement.addEventListener('mousemove', handleMouseMove);
     canvas.parentElement.addEventListener('mouseleave', handleMouseLeave);
 
-    let time = 0;
     const render = () => {
-      time += 0.02;
+      if (isPaused) return;
+
       ctx.clearRect(0, 0, width, height);
 
-      // Draw subtle circuit interconnects
+      // Connect lines
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const maxDist = 120;
+          const maxDist = isMobile ? 80 : 110;
 
           if (dist < maxDist) {
-            const alpha = (1 - dist / maxDist) * 0.22;
+            const alpha = (1 - dist / maxDist) * 0.18;
             ctx.beginPath();
             ctx.strokeStyle = `rgba(183, 243, 74, ${alpha})`;
             ctx.lineWidth = 0.8;
@@ -106,7 +135,7 @@ export default function Hero() {
         }
       }
 
-      // Draw and update particle nodes
+      // Draw nodes
       particles.forEach((p) => {
         p.x += p.vx;
         p.y += p.vy;
@@ -116,33 +145,24 @@ export default function Hero() {
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Subtle mouse repulsion
         const mdx = p.x - mouse.x;
         const mdy = p.y - mouse.y;
         const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mDist < 100) {
-          const force = (1 - mDist / 100) * 0.8;
+        if (mDist < 90) {
+          const force = (1 - mDist / 90) * 0.6;
           p.x += (mdx / mDist) * force;
           p.y += (mdy / mDist) * force;
         }
 
-        // Draw node
         ctx.beginPath();
         if (p.isLeafNode) {
-          // Emerald Leaf Dot
           ctx.arc(p.x, p.y, p.radius * 1.1, 0, Math.PI * 2);
           ctx.fillStyle = '#22C55E';
-          ctx.shadowColor = '#10B981';
-          ctx.shadowBlur = 6;
         } else {
-          // Tech Circuit Node
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
           ctx.fillStyle = '#B7F34A';
-          ctx.shadowColor = '#B7F34A';
-          ctx.shadowBlur = 8;
         }
         ctx.fill();
-        ctx.shadowBlur = 0; // reset
       });
 
       animationFrameId = requestAnimationFrame(render);
@@ -153,13 +173,16 @@ export default function Hero() {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      observer.disconnect();
     };
   }, []);
 
   return (
     <section
       id="home"
-      className="relative min-h-[92vh] lg:min-h-screen bg-forest-deep text-white flex flex-col justify-between overflow-hidden pt-28 pb-12"
+      ref={heroRef}
+      className="relative min-h-[100svh] bg-forest-deep text-white flex flex-col justify-between overflow-hidden pt-24 pb-8 md:py-28"
     >
       {/* Background Interactive Canvas */}
       <canvas
@@ -168,51 +191,56 @@ export default function Hero() {
       />
 
       {/* Ambient gradient backdrops */}
-      <div className="absolute top-1/4 -left-20 w-80 h-80 rounded-full bg-emerald-600/15 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/3 -right-20 w-96 h-96 rounded-full bg-lime/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 -left-20 w-72 h-72 rounded-full bg-emerald-600/15 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-80 h-80 rounded-full bg-lime/10 blur-3xl pointer-events-none" />
 
-      {/* Main Hero Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      {/* Main Container - 1200px max width */}
+      <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 items-center">
           
-          {/* Left Column: Heading, Typewriter, CTAs (7 cols) */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            {/* College & Department Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-forest-surface border border-lime/30 text-lime text-xs font-mono tracking-wide shadow-glow-lime/20">
-              <Terminal className="w-3.5 h-3.5 text-lime" />
-              <span>ABES ENGINEERING COLLEGE · TECH & PROJECT DIVISION</span>
+          {/* Main Content Column (Desktop: left 7 cols; Mobile: stacked top) */}
+          <div className="md:col-span-7 flex flex-col items-center md:items-start text-center md:text-left space-y-4 sm:space-y-5">
+            
+            {/* Small Logo Mark (Visible on Mobile at top of stack as requested) */}
+            <div className="md:hidden w-12 h-12 rounded-2xl bg-forest-surface p-2 border border-lime/30 shadow-glow-lime/10 mb-1 flex items-center justify-center">
+              <img
+                src="/assets/logo-icon.png"
+                alt="Eco Club Mark"
+                className="w-full h-full object-contain"
+              />
             </div>
 
-            {/* Main Display Headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold tracking-tight leading-[1.15]">
-              Nature Meets <br />
+            {/* Hero Pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-forest-surface border border-lime/30 text-lime text-xs font-mono font-semibold tracking-wide shadow-glow-lime/20">
+              <Terminal className="w-3.5 h-3.5 text-lime flex-shrink-0" />
+              <span>ABES ENGINEERING COLLEGE · ECO CLUB</span>
+            </div>
+
+            {/* Display Headline with clamp scaling */}
+            <h1 className="heading-hero font-display font-extrabold tracking-tight text-white">
+              Nature Meets <br className="hidden sm:inline" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-lime via-emerald-400 to-teal-300">
                 Intelligent Tech.
               </span>
             </h1>
 
             {/* Typewriter Rotating Line */}
-            <div className="flex items-center justify-center lg:justify-start gap-2 h-10 font-mono text-lg sm:text-xl md:text-2xl text-lime">
+            <div className="flex items-center justify-center md:justify-start gap-2 h-9 font-mono text-base sm:text-xl text-lime">
               <span className="text-emerald-400">❯</span>
               <span className="font-semibold">{currentText}</span>
-              <span className="w-2.5 h-6 bg-lime animate-pulse inline-block" />
+              <span className="w-2 h-5 bg-lime animate-pulse inline-block" />
             </div>
 
-            {/* Official Motto */}
-            <p className="text-sm sm:text-base font-mono uppercase tracking-[0.2em] text-emerald-300/90 font-medium">
-              “{siteConfig.tagline}”
+            {/* One-Line Descriptive Text as requested */}
+            <p className="text-base sm:text-lg text-gray-200 max-w-[70ch] leading-relaxed">
+              ABES's student club using technology to protect our campus and planet.
             </p>
 
-            {/* Descriptive Body */}
-            <p className="text-base sm:text-lg text-gray-300 max-w-2xl leading-relaxed mx-auto lg:mx-0">
-              We are the official environmental student collective at ABES EC, Ghaziabad. We don't just advocate for green habits—we engineer sensor networks, automated monitors, and ground drives to protect our ecosystems.
-            </p>
-
-            {/* Two Action CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+            {/* Full-width on mobile CTAs, auto-width on desktop */}
+            <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3 pt-2">
               <a
                 href="#join"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-lime to-lime-bright text-forest-deep font-bold text-sm tracking-wide shadow-glow-lime hover:shadow-[0_0_35px_rgba(183,243,74,0.55)] hover:scale-105 active:scale-95 transition-all text-center flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-lime to-lime-bright text-forest-deep font-bold text-sm tracking-wide shadow-glow-lime hover:shadow-[0_0_30px_rgba(183,243,74,0.5)] hover:scale-[1.02] active:scale-95 transition-all text-center flex items-center justify-center gap-2"
                 style={{ minHeight: '48px' }}
               >
                 <span>Join the Club</span>
@@ -221,7 +249,7 @@ export default function Hero() {
 
               <a
                 href="#events"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-forest-surface/90 hover:bg-forest-border text-white border border-forest-border hover:border-lime/40 font-medium text-sm transition-all text-center flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-forest-surface/90 hover:bg-forest-border text-white border border-forest-border hover:border-lime/40 font-semibold text-sm transition-all text-center flex items-center justify-center gap-2"
                 style={{ minHeight: '48px' }}
               >
                 <span>Explore Events</span>
@@ -229,32 +257,20 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* Quick Tech Tagline Pills */}
-            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-2 text-xs font-mono text-gray-400">
-              <span className="px-2.5 py-1 rounded bg-forest-surface/80 border border-forest-border/80 text-emerald-300">
-                #IoTforCleanAir
-              </span>
-              <span className="px-2.5 py-1 rounded bg-forest-surface/80 border border-forest-border/80 text-lime">
-                #GreenCode
-              </span>
-              <span className="px-2.5 py-1 rounded bg-forest-surface/80 border border-forest-border/80 text-teal-300">
-                #ZeroCampusWaste
-              </span>
-            </div>
           </div>
 
-          {/* Right Column: Rotating Wireframe Eco-Sphere Graphic (5 cols) */}
-          <div className="lg:col-span-5 flex items-center justify-center relative">
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 flex items-center justify-center">
+          {/* Eco-Sphere Column (Desktop: right 5 cols; Mobile: placed below text at smaller size) */}
+          <div className="md:col-span-5 flex items-center justify-center relative mt-4 md:mt-0">
+            <div className="relative w-52 h-52 sm:w-64 sm:h-64 md:w-80 md:h-80 flex items-center justify-center">
               
-              {/* Outer Circuit Orbit Rings */}
+              {/* Outer Orbit Rings */}
               <div className="absolute inset-0 rounded-full border border-dashed border-lime/30 animate-[spin_40s_linear_infinite]" />
-              <div className="absolute inset-4 rounded-full border border-emerald-500/30 animate-[spin_25s_linear_infinite_reverse]" />
+              <div className="absolute inset-3 sm:inset-4 rounded-full border border-emerald-500/30 animate-[spin_25s_linear_infinite_reverse]" />
               
-              {/* Center Wireframe Globe graphic */}
-              <div className="relative w-48 h-48 sm:w-60 sm:h-60 rounded-full bg-gradient-to-tr from-forest-surface to-forest-border/60 border border-lime/40 p-6 flex flex-col items-center justify-center text-center shadow-glow-emerald">
-                {/* Embedded Circuit Leaf Logo */}
-                <div className="w-24 h-24 sm:w-28 sm:h-28 relative animate-pulse-subtle">
+              {/* Center Wireframe Globe */}
+              <div className="relative w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full bg-gradient-to-tr from-forest-surface to-forest-border/60 border border-lime/40 p-4 sm:p-6 flex flex-col items-center justify-center text-center shadow-glow-emerald">
+                {/* Circuit Leaf Logo */}
+                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 relative animate-pulse-subtle">
                   <img
                     src="/assets/logo-icon.png"
                     alt="Eco Club Leaf Circuit"
@@ -262,23 +278,20 @@ export default function Hero() {
                   />
                 </div>
 
-                <div className="mt-2 text-center">
+                <div className="mt-1 text-center">
                   <span className="text-[11px] font-mono uppercase tracking-widest text-lime font-bold">
                     CONNECTED ECO-SYSTEM
                   </span>
-                  <div className="text-[10px] text-gray-300 font-mono">
-                    ABES EC · EST. CAMPUS DRIVE
-                  </div>
                 </div>
               </div>
 
-              {/* Floating Orbiting Satellite Badges */}
-              <div className="absolute -top-3 right-6 bg-forest-surface/95 border border-lime/40 px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-xs font-mono text-lime animate-float">
+              {/* Orbiting Satellite Badges */}
+              <div className="absolute -top-2 right-2 sm:right-6 bg-forest-surface/95 border border-lime/40 px-2.5 py-1 rounded-xl shadow-lg flex items-center gap-1.5 text-xs font-mono text-lime">
                 <span className="w-2 h-2 rounded-full bg-lime animate-ping" />
                 <span>Live Sensors Active</span>
               </div>
 
-              <div className="absolute -bottom-4 left-6 bg-forest-surface/95 border border-emerald-500/40 px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2 text-xs font-mono text-emerald-300 animate-float" style={{ animationDelay: '2s' }}>
+              <div className="absolute -bottom-2 left-2 sm:left-6 bg-forest-surface/95 border border-emerald-500/40 px-2.5 py-1 rounded-xl shadow-lg flex items-center gap-1.5 text-xs font-mono text-emerald-300">
                 <Globe className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Zero Carbon Mission</span>
               </div>
@@ -288,16 +301,16 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll Down Indicator */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center pt-8">
+      {/* Subtle Scroll Down Indicator */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center pt-2">
         <a
-          href="#announcements"
-          className="flex flex-col items-center gap-1.5 text-xs font-mono text-gray-400 hover:text-lime transition-colors focus:outline-none"
-          aria-label="Scroll to announcements and about section"
+          href="#quick-links"
+          className="flex flex-col items-center gap-1 text-xs font-mono text-gray-400 hover:text-lime transition-colors focus:outline-none"
+          aria-label="Scroll to quick links"
         >
-          <span className="tracking-wider uppercase text-[10px]">Scroll Down</span>
-          <div className="w-6 h-9 rounded-full border border-gray-500 flex items-start justify-center p-1">
-            <span className="w-1.5 h-2.5 bg-lime rounded-full animate-bounce" />
+          <span className="tracking-wider uppercase text-[10px]">Explore</span>
+          <div className="w-5 h-8 rounded-full border border-gray-600 flex items-start justify-center p-1">
+            <span className="w-1 h-2 bg-lime rounded-full animate-bounce" />
           </div>
         </a>
       </div>

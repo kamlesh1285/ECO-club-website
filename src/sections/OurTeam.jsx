@@ -13,7 +13,7 @@ const divisionIconMap = {
   UserCheck
 };
 
-function InitialsAvatar({ initials, gradient = "from-emerald-500 to-lime-400", size = "w-16 h-16 text-xl" }) {
+function InitialsAvatar({ initials, gradient = "from-emerald-500 to-lime-400", size = "w-14 h-14 text-base" }) {
   return (
     <div className={`relative p-0.5 rounded-full bg-gradient-to-tr ${gradient} shadow-sm flex-shrink-0 inline-block`}>
       <div className={`${size} rounded-full bg-forest-deep flex items-center justify-center font-display font-bold text-white tracking-wider`}>
@@ -32,41 +32,41 @@ export default function OurTeam() {
   const DivIcon = divisionIconMap[activeDivision.icon] || Cpu;
 
   return (
-    <section id="team" className="py-20 bg-cream relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="team" className="py-16 sm:py-20 bg-cream relative">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Heading */}
+        {/* Section Heading - 1 title + at most 2 lines subtitle */}
         <SectionHeading
           badge="CLUB ROSTER"
-          title="Meet Our Faculty Counselors &"
-          highlight="Student Leadership"
-          description="A dedicated community of engineering faculty mentors and student leaders driving environmental transformation."
+          title="Faculty Mentors &"
+          highlight="Leadership"
+          description="Dedicated engineering faculty advisors and student division teams driving campus ecological action."
         />
 
         {/* 1. Faculty Counselors */}
-        <div className="mb-16">
-          <div className="flex items-center gap-2 mb-6">
+        <div className="mb-14">
+          <div className="flex items-center gap-2 mb-5">
             <GraduationCap className="w-5 h-5 text-emerald-600" />
-            <h3 className="text-xl sm:text-2xl font-display font-bold text-forest">
+            <h3 className="heading-card font-display font-bold text-forest">
               Faculty Counselors
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {facultyCounselors.map((counselor, idx) => (
               <div
                 key={idx}
-                className="bg-white p-6 sm:p-8 rounded-3xl border border-cream-border shadow-soft-organic flex items-center gap-5 hover:border-emerald-300 transition-all"
+                className="bg-white p-5 sm:p-6 rounded-3xl border border-cream-border shadow-soft-organic flex items-center gap-4 hover:border-emerald-300 transition-all"
               >
-                <InitialsAvatar initials={counselor.initials} gradient={counselor.accent} size="w-20 h-20 text-2xl" />
+                <InitialsAvatar initials={counselor.initials} gradient={counselor.accent} size="w-16 h-16 text-lg" />
                 <div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-emerald-100 text-leaf">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-100 text-leaf">
                     {counselor.role}
                   </span>
-                  <h4 className="text-xl font-display font-bold text-forest mt-1.5">
+                  <h4 className="text-lg sm:text-xl font-display font-bold text-forest mt-1">
                     {counselor.name}
                   </h4>
-                  <p className="text-xs sm:text-sm text-forest/70 mt-1">
+                  <p className="text-xs text-forest/70 mt-0.5 font-sans">
                     {counselor.department}
                   </p>
                 </div>
@@ -76,40 +76,40 @@ export default function OurTeam() {
         </div>
 
         {/* 2. Core Leadership (Club Board) */}
-        <div className="mb-16">
-          <div className="flex items-center gap-2 mb-6">
+        <div className="mb-14">
+          <div className="flex items-center gap-2 mb-5">
             <Award className="w-5 h-5 text-emerald-600" />
-            <h3 className="text-xl sm:text-2xl font-display font-bold text-forest">
+            <h3 className="heading-card font-display font-bold text-forest">
               Core Leadership (Club Board)
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {coreLeadership.map((leader, idx) => (
               <div
                 key={idx}
-                className={`bg-white p-6 sm:p-7 rounded-3xl border ${
+                className={`bg-white p-5 sm:p-6 rounded-3xl border ${
                   leader.isTBA ? 'border-dashed border-amber-300 bg-amber-50/20' : 'border-cream-border'
                 } shadow-soft-organic hover:border-emerald-300 transition-all flex flex-col justify-between`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <InitialsAvatar initials={leader.initials} gradient={leader.accent} size="w-16 h-16 text-lg" />
-                    <span className={`text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full ${
+                  <div className="flex items-center justify-between mb-3.5">
+                    <InitialsAvatar initials={leader.initials} gradient={leader.accent} size="w-14 h-14 text-base" />
+                    <span className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full ${
                       leader.isTBA ? 'bg-amber-100 text-amber-800' : 'bg-lime/20 text-leaf-dark'
                     }`}>
                       {leader.role}
                     </span>
                   </div>
-                  <h4 className="text-lg font-display font-bold text-forest">
+                  <h4 className="text-base sm:text-lg font-display font-bold text-forest">
                     {leader.name}
                   </h4>
-                  <p className="text-xs text-forest/75 mt-2 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-forest/75 mt-1.5 leading-relaxed">
                     {leader.description}
                   </p>
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-cream-border flex items-center gap-1.5 text-[11px] font-mono text-emerald-700">
+                <div className="mt-4 pt-3 border-t border-cream-border flex items-center gap-1.5 text-xs font-mono text-emerald-700">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>Executive Board Member</span>
                 </div>
@@ -120,19 +120,19 @@ export default function OurTeam() {
 
         {/* 3. Division-wise Teams (Filterable Tabs) */}
         <div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
             <div>
-              <h3 className="text-xl sm:text-2xl font-display font-bold text-forest">
+              <h3 className="heading-card font-display font-bold text-forest">
                 Club Divisions
               </h3>
-              <p className="text-xs sm:text-sm text-forest/70 mt-1">
+              <p className="text-xs sm:text-sm text-forest/70">
                 Explore individual functional teams and their specialized mandates.
               </p>
             </div>
           </div>
 
           {/* Division Select Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto pb-3 scrollbar-none">
             {divisions.map((div) => {
               const Icon = divisionIconMap[div.icon] || Cpu;
               const isSelected = selectedDivisionId === div.id;
@@ -158,26 +158,26 @@ export default function OurTeam() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeDivision.id}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.25 }}
-              className="bg-white rounded-3xl p-6 sm:p-10 border border-cream-border shadow-lifted mt-2"
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-3xl p-5 sm:p-8 border border-cream-border shadow-lifted mt-2"
             >
               {/* Header info */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-cream-border">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-leaf flex items-center justify-center">
-                    <DivIcon className="w-7 h-7" />
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-cream-border">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-leaf flex items-center justify-center flex-shrink-0">
+                    <DivIcon className="w-6 h-6" />
                   </div>
                   <div>
                     <span className="text-xs font-mono font-semibold text-emerald-600 uppercase tracking-wider">
                       DIVISION FOCUS
                     </span>
-                    <h4 className="text-2xl font-display font-bold text-forest">
+                    <h4 className="text-xl sm:text-2xl font-display font-bold text-forest">
                       {activeDivision.name}
                     </h4>
-                    <p className="text-sm font-mono text-leaf mt-0.5">
+                    <p className="text-xs sm:text-sm font-mono text-leaf mt-0.5">
                       “{activeDivision.tagline}”
                     </p>
                   </div>
@@ -188,22 +188,22 @@ export default function OurTeam() {
                 </div>
               </div>
 
-              {/* Members Grid */}
-              <div className="pt-8">
-                <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-forest/60 mb-6">
+              {/* Members Grid - reflows from 3/2 to 1 column */}
+              <div className="pt-6">
+                <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-forest/60 mb-4">
                   Division Members Roster
                 </h5>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Division Head if present */}
                   {activeDivision.head && (
-                    <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50 to-lime-50/40 border border-emerald-200 flex items-center gap-4">
-                      <InitialsAvatar initials={activeDivision.head.initials} gradient={activeDivision.head.accent} size="w-14 h-14 text-base" />
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-lime-50/40 border border-emerald-200 flex items-center gap-3.5">
+                      <InitialsAvatar initials={activeDivision.head.initials} gradient={activeDivision.head.accent} size="w-12 h-12 text-sm" />
                       <div>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-600 text-white font-bold uppercase">
+                        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-emerald-600 text-white font-bold uppercase">
                           Division Head
                         </span>
-                        <h6 className="font-display font-bold text-forest text-base mt-1">
+                        <h6 className="font-display font-bold text-forest text-sm sm:text-base mt-1">
                           {activeDivision.head.name}
                         </h6>
                         <span className="text-xs text-forest/70">{activeDivision.name}</span>
@@ -215,14 +215,14 @@ export default function OurTeam() {
                   {activeDivision.coreTeam.map((member, idx) => (
                     <div
                       key={idx}
-                      className="p-5 rounded-2xl bg-cream/50 border border-cream-border hover:bg-white hover:border-emerald-300 hover:shadow-sm transition-all flex items-center gap-4"
+                      className="p-4 rounded-2xl bg-cream/50 border border-cream-border hover:bg-white hover:border-emerald-300 hover:shadow-sm transition-all flex items-center gap-3.5"
                     >
-                      <InitialsAvatar initials={member.initials} gradient="from-teal-400 to-emerald-600" size="w-14 h-14 text-base" />
+                      <InitialsAvatar initials={member.initials} gradient="from-teal-400 to-emerald-600" size="w-12 h-12 text-sm" />
                       <div>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-forest-surface text-gray-200 font-medium">
+                        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-forest-surface text-gray-200 font-medium">
                           {member.role}
                         </span>
-                        <h6 className="font-display font-bold text-forest text-base mt-1">
+                        <h6 className="font-display font-bold text-forest text-sm sm:text-base mt-1">
                           {member.name}
                         </h6>
                         <span className="text-xs text-forest/65">{activeDivision.name}</span>

@@ -18,8 +18,6 @@ export const conceptProjects = [
       "Threshold alerts for outdoor sporting activities",
       "Historical particulate density trends"
     ],
-    githubUrl: "#", // Sample placeholder
-    demoUrl: "#",
     isSample: true
   },
   {
@@ -35,8 +33,6 @@ export const conceptProjects = [
       "Departmental green leaderboard to encourage participation",
       "Automated weight and carbon offset calculations"
     ],
-    githubUrl: "#",
-    demoUrl: "#",
     isSample: true
   },
   {
@@ -52,8 +48,6 @@ export const conceptProjects = [
       "Campus energy footprint analytics report generator",
       "Projected 18% reduction in non-operational energy waste"
     ],
-    githubUrl: "#",
-    demoUrl: "#",
     isSample: true
   },
   {
@@ -69,8 +63,6 @@ export const conceptProjects = [
       "Survival rate tracking over 12-month growth cycles",
       "Volunteer watering reminders"
     ],
-    githubUrl: "#",
-    demoUrl: "#",
     isSample: true
   }
 ];

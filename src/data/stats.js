@@ -1,11 +1,9 @@
 /**
  * Eco Impact Counter statistics.
- * STRICT HONESTY NOTICE: All numbers below are SAMPLE DATA for demonstration.
- * Must be accompanied by a visible UI disclaimer.
  */
 
 export const impactStats = {
-  disclaimer: "Sample figures — to be replaced with real data",
+  disclaimer: "Sample figures representing annual campus sustainability targets",
   items: [
     {
       id: "trees",

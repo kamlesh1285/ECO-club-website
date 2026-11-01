@@ -1,10 +1,107 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, MapPin, Tag, ArrowRight, CheckCircle2, Timer, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, ArrowRight, CheckCircle2, Timer, ChevronDown } from 'lucide-react';
 import { eventsData, getNextUpcomingEvent } from '../data/events';
-import { siteConfig } from '../data/config';
 import SectionHeading from '../components/SectionHeading';
 import Modal from '../components/Modal';
+import SampleBadge from '../components/SampleBadge';
+
+function EventCard({ evt, onRegister }) {
+  const [showDetails, setShowDetails] = useState(false);
+
+  return (
+    <div className="w-[85vw] max-w-[340px] flex-shrink-0 snap-start md:w-auto md:max-w-none md:flex-shrink bg-white rounded-3xl p-5 sm:p-6 border border-cream-border shadow-soft-organic hover:shadow-lifted hover:border-emerald-300 transition-all flex flex-col justify-between">
+      <div>
+        {/* Status & Sample Badge */}
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-1.5">
+            <span className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-full uppercase ${
+              evt.status === 'upcoming'
+                ? 'bg-emerald-100 text-leaf'
+                : evt.status === 'ongoing'
+                ? 'bg-amber-100 text-amber-800'
+                : 'bg-gray-100 text-gray-600'
+            }`}>
+              {evt.status}
+            </span>
+            <SampleBadge text="Sample" />
+          </div>
+          
+          {evt.status === 'upcoming' && (
+            <span className="text-xs font-mono text-emerald-600 font-medium">
+              {evt.spotsRemaining} spots left
+            </span>
+          )}
+        </div>
+
+        <h4 className="heading-card font-display font-bold text-forest hover:text-emerald transition-colors line-clamp-2">
+          {evt.title}
+        </h4>
+
+        {/* Date & Location */}
+        <div className="mt-3.5 space-y-1.5 text-xs text-forest/75 font-sans">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-3.5 h-3.5 text-emerald flex-shrink-0" />
+            <span>{evt.date}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock className="w-3.5 h-3.5 text-emerald flex-shrink-0" />
+            <span>{evt.time}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <MapPin className="w-3.5 h-3.5 text-emerald flex-shrink-0" />
+            <span className="truncate">{evt.venue}</span>
+          </div>
+        </div>
+
+        {/* Description & Toggle */}
+        <p className="text-xs sm:text-sm text-forest/70 mt-3 leading-relaxed line-clamp-2">
+          {evt.description}
+        </p>
+
+        <button
+          type="button"
+          onClick={() => setShowDetails(!showDetails)}
+          className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-leaf mt-2 hover:underline focus:outline-none"
+        >
+          <span>{showDetails ? "Less info" : "Details"}</span>
+          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showDetails ? 'rotate-180' : ''}`} />
+        </button>
+
+        {showDetails && (
+          <div className="mt-2.5 p-3 rounded-xl bg-cream/70 text-xs text-forest/80 leading-relaxed border border-cream-border">
+            {evt.description}
+          </div>
+        )}
+      </div>
+
+      {/* Tags & Action */}
+      <div className="mt-5 pt-3.5 border-t border-cream-border">
+        <div className="flex flex-wrap gap-1.5 mb-3.5">
+          {evt.tags.map((t, idx) => (
+            <span key={idx} className="text-xs font-mono bg-cream px-2 py-0.5 rounded text-forest/70">
+              #{t}
+            </span>
+          ))}
+        </div>
+
+        {evt.status !== 'past' ? (
+          <button
+            onClick={() => onRegister(evt)}
+            className="w-full py-2.5 px-4 rounded-xl bg-forest-deep text-white font-mono text-xs font-bold hover:bg-forest-surface hover:text-lime transition-all flex items-center justify-center gap-2 shadow-sm"
+            style={{ minHeight: '44px' }}
+          >
+            <span>RESERVE SEAT</span>
+            <ArrowRight className="w-3.5 h-3.5 text-lime" />
+          </button>
+        ) : (
+          <div className="w-full py-2.5 text-center text-xs font-mono text-gray-500 bg-gray-50 rounded-xl">
+            Event Concluded
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function Events() {
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -55,8 +152,6 @@ export default function Events() {
 
   // Tab Filtering
   const tabEvents = eventsData.filter(e => e.status === activeTab);
-  
-  // Extract unique tags for the active tab
   const allTags = ["All", ...Array.from(new Set(tabEvents.flatMap(e => e.tags)))];
   
   const filteredEvents = selectedTag === "All"
@@ -68,7 +163,7 @@ export default function Events() {
     const errs = {};
     if (!formData.name.trim()) errs.name = "Full name is required.";
     if (!formData.email.trim()) {
-      errs.email = "College email is required.";
+      errs.email = "Student email is required.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errs.email = "Please enter a valid email address.";
     }
@@ -81,11 +176,10 @@ export default function Events() {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    // Simulate async submission
     setTimeout(() => {
       setIsSubmitting(false);
       setRegistrationSuccess(true);
-    }, 700);
+    }, 600);
   };
 
   const handleCloseModal = () => {
@@ -101,28 +195,28 @@ export default function Events() {
   };
 
   return (
-    <section id="events" className="py-20 bg-cream relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="events" className="py-16 sm:py-20 bg-cream relative">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Heading */}
+        {/* Section Heading - 1 title + at most 2 lines subtitle */}
         <SectionHeading
           badge="CAMPUS CALENDAR"
           title="Green Drives & Technical"
           highlight="Events"
-          description="Stay informed about upcoming green hackathons, sapling plantation days, campus cleanups, and eco-workshops."
-          sampleDisclaimer="Sample events schedule — with verified future dates"
+          description="Upcoming green hackathons, sapling plantation drives, campus cleanups, and technical workshops."
+          sampleDisclaimer="Sample event schedule with upcoming dates"
         />
 
         {/* Live Countdown Banner to Next Upcoming Event */}
         {nextEvent && (
-          <div className="mb-12 bg-gradient-to-r from-forest-deep via-forest-surface to-forest-deep text-white rounded-3xl p-6 sm:p-8 border border-lime/30 shadow-xl relative overflow-hidden">
+          <div className="mb-10 bg-gradient-to-r from-forest-deep via-forest-surface to-forest-deep text-white rounded-3xl p-5 sm:p-7 border border-lime/30 shadow-xl relative overflow-hidden">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
-              <div className="space-y-2 text-center lg:text-left">
+              <div className="space-y-1.5 text-center lg:text-left">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-lime/20 text-lime font-mono text-xs uppercase font-bold tracking-wider">
                   <Timer className="w-3.5 h-3.5" />
-                  <span>NEXT UPCOMING EVENT · SAMPLE</span>
+                  <span>NEXT UPCOMING EVENT</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-display font-bold">
+                <h3 className="heading-card font-display font-bold">
                   {nextEvent.title}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-300 flex items-center justify-center lg:justify-start gap-4 flex-wrap">
@@ -132,24 +226,24 @@ export default function Events() {
               </div>
 
               {/* Countdown Digits */}
-              <div className="flex items-center gap-3 text-center font-mono">
-                <div className="bg-forest-surface/90 border border-lime/30 p-3 rounded-2xl min-w-[64px]">
-                  <span className="text-2xl sm:text-3xl font-bold text-lime block leading-none">{timeLeft.days}</span>
+              <div className="flex items-center gap-2.5 text-center font-mono">
+                <div className="bg-forest-surface/90 border border-lime/30 p-2.5 rounded-2xl min-w-[56px] sm:min-w-[62px]">
+                  <span className="text-xl sm:text-2xl font-bold text-lime block leading-none">{timeLeft.days}</span>
                   <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 block">Days</span>
                 </div>
-                <span className="text-xl font-bold text-lime/60">:</span>
-                <div className="bg-forest-surface/90 border border-lime/30 p-3 rounded-2xl min-w-[64px]">
-                  <span className="text-2xl sm:text-3xl font-bold text-lime block leading-none">{timeLeft.hours}</span>
+                <span className="text-lg font-bold text-lime/60">:</span>
+                <div className="bg-forest-surface/90 border border-lime/30 p-2.5 rounded-2xl min-w-[56px] sm:min-w-[62px]">
+                  <span className="text-xl sm:text-2xl font-bold text-lime block leading-none">{timeLeft.hours}</span>
                   <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 block">Hours</span>
                 </div>
-                <span className="text-xl font-bold text-lime/60">:</span>
-                <div className="bg-forest-surface/90 border border-lime/30 p-3 rounded-2xl min-w-[64px]">
-                  <span className="text-2xl sm:text-3xl font-bold text-lime block leading-none">{timeLeft.minutes}</span>
+                <span className="text-lg font-bold text-lime/60">:</span>
+                <div className="bg-forest-surface/90 border border-lime/30 p-2.5 rounded-2xl min-w-[56px] sm:min-w-[62px]">
+                  <span className="text-xl sm:text-2xl font-bold text-lime block leading-none">{timeLeft.minutes}</span>
                   <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 block">Mins</span>
                 </div>
-                <span className="text-xl font-bold text-lime/60">:</span>
-                <div className="bg-forest-surface/90 border border-lime/30 p-3 rounded-2xl min-w-[64px]">
-                  <span className="text-2xl sm:text-3xl font-bold text-lime block leading-none">{timeLeft.seconds}</span>
+                <span className="text-lg font-bold text-lime/60">:</span>
+                <div className="bg-forest-surface/90 border border-lime/30 p-2.5 rounded-2xl min-w-[56px] sm:min-w-[62px]">
+                  <span className="text-xl sm:text-2xl font-bold text-lime block leading-none">{timeLeft.seconds}</span>
                   <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 block">Secs</span>
                 </div>
               </div>
@@ -166,7 +260,7 @@ export default function Events() {
         )}
 
         {/* Tab Buttons (Upcoming / Ongoing / Past) */}
-        <div className="flex items-center justify-center gap-3 mb-6">
+        <div className="flex items-center justify-center gap-2.5 mb-5">
           {[
             { id: "upcoming", label: "Upcoming Events" },
             { id: "ongoing", label: "Ongoing Drives" },
@@ -178,7 +272,7 @@ export default function Events() {
                 setActiveTab(tab.id);
                 setSelectedTag("All");
               }}
-              className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
+              className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === tab.id
                   ? 'bg-forest-deep text-lime shadow-md border border-lime/30'
                   : 'bg-white text-forest/75 hover:bg-white/90 border border-cream-border'
@@ -192,7 +286,7 @@ export default function Events() {
 
         {/* Tag Filters */}
         {allTags.length > 2 && (
-          <div className="flex items-center justify-center gap-2 flex-wrap mb-8">
+          <div className="flex items-center justify-center gap-2 flex-wrap mb-6">
             {allTags.map(tag => (
               <button
                 key={tag}
@@ -209,84 +303,14 @@ export default function Events() {
           </div>
         )}
 
-        {/* Event Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Event Cards - Grid on desktop, horizontal snap-swipe list on mobile (Point 14) */}
+        <div className="flex overflow-x-auto snap-x snap-mandatory pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0 scrollbar-none">
           {filteredEvents.map((evt) => (
-            <div
+            <EventCard
               key={evt.id}
-              className="bg-white rounded-3xl p-6 sm:p-7 border border-cream-border shadow-soft-organic hover:shadow-lifted hover:border-emerald-300 transition-all flex flex-col justify-between"
-            >
-              <div>
-                {/* Header status */}
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase ${
-                    evt.status === 'upcoming'
-                      ? 'bg-emerald-100 text-leaf'
-                      : evt.status === 'ongoing'
-                      ? 'bg-amber-100 text-amber-800 animate-pulse'
-                      : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {evt.status} · SAMPLE
-                  </span>
-                  
-                  {evt.status === 'upcoming' && (
-                    <span className="text-[11px] font-mono text-emerald-600">
-                      {evt.spotsRemaining} spots left
-                    </span>
-                  )}
-                </div>
-
-                <h4 className="text-xl font-display font-bold text-forest hover:text-emerald transition-colors line-clamp-2">
-                  {evt.title}
-                </h4>
-
-                {/* Metadata */}
-                <div className="mt-4 space-y-1.5 text-xs text-forest/75 font-sans">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-emerald flex-shrink-0" />
-                    <span>{evt.date}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-emerald flex-shrink-0" />
-                    <span>{evt.time}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-emerald flex-shrink-0" />
-                    <span className="truncate">{evt.venue}</span>
-                  </div>
-                </div>
-
-                <p className="text-xs text-forest/70 mt-4 leading-relaxed line-clamp-3">
-                  {evt.description}
-                </p>
-              </div>
-
-              {/* Tags & Action Button */}
-              <div className="mt-6 pt-4 border-t border-cream-border">
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {evt.tags.map((t, idx) => (
-                    <span key={idx} className="text-[10px] font-mono bg-cream px-2 py-0.5 rounded text-forest/65">
-                      #{t}
-                    </span>
-                  ))}
-                </div>
-
-                {evt.status !== 'past' ? (
-                  <button
-                    onClick={() => setRegisteringEvent(evt)}
-                    className="w-full py-2.5 px-4 rounded-xl bg-forest-deep text-white font-mono text-xs font-bold hover:bg-forest-surface hover:text-lime transition-all flex items-center justify-center gap-2 shadow-sm"
-                    style={{ minHeight: '44px' }}
-                  >
-                    <span>REGISTER FOR SEAT</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-lime" />
-                  </button>
-                ) : (
-                  <div className="w-full py-2 text-center text-xs font-mono text-gray-500 bg-gray-50 rounded-xl">
-                    Event Successfully Concluded
-                  </div>
-                )}
-              </div>
-            </div>
+              evt={evt}
+              onRegister={(target) => setRegisteringEvent(target)}
+            />
           ))}
         </div>
 
@@ -308,7 +332,6 @@ export default function Events() {
                   <span><strong>{registeringEvent.date}</strong> — {registeringEvent.time}</span>
                 </div>
 
-                {/* Name */}
                 <div>
                   <label className="block text-xs font-display font-semibold text-forest mb-1">
                     Full Name *
@@ -321,10 +344,9 @@ export default function Events() {
                     className="w-full px-3.5 py-2.5 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none"
                     style={{ minHeight: '44px' }}
                   />
-                  {errors.name && <span className="text-[11px] text-red-600 mt-1 block">{errors.name}</span>}
+                  {errors.name && <span className="text-xs text-red-600 mt-1 block">{errors.name}</span>}
                 </div>
 
-                {/* Email */}
                 <div>
                   <label className="block text-xs font-display font-semibold text-forest mb-1">
                     Student / College Email *
@@ -333,14 +355,13 @@ export default function Events() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="e.g. sarthak.22b0123@abes.ac.in"
+                    placeholder="e.g. yourname@abes.ac.in"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none"
                     style={{ minHeight: '44px' }}
                   />
-                  {errors.email && <span className="text-[11px] text-red-600 mt-1 block">{errors.email}</span>}
+                  {errors.email && <span className="text-xs text-red-600 mt-1 block">{errors.email}</span>}
                 </div>
 
-                {/* Branch & Year */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-display font-semibold text-forest mb-1">
@@ -380,12 +401,6 @@ export default function Events() {
                   </div>
                 </div>
 
-                {/* Honesty note about Demo Mode */}
-                <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-800 flex items-start gap-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                  <span>Demo Mode: Submissions validate on client. Connect your Google Form / Webhook in <code>src/data/config.js</code>.</span>
-                </div>
-
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -396,25 +411,24 @@ export default function Events() {
                     <span>Registering...</span>
                   ) : (
                     <>
-                      <span>CONFIRM REGISTRATION</span>
+                      <span>CONFIRM SEAT RESERVATION</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </>
                   )}
                 </button>
               </form>
             ) : (
-              /* Success Animation Screen */
-              <div className="text-center py-6 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto animate-bounce">
-                  <CheckCircle2 className="w-10 h-10" />
+              <div className="text-center py-6 space-y-3">
+                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h4 className="text-xl font-display font-bold text-forest">
-                  Registration Confirmed!
+                <h4 className="heading-card font-display font-bold text-forest">
+                  Seat Confirmed!
                 </h4>
-                <p className="text-xs text-forest/75 max-w-xs mx-auto">
-                  Thank you, <strong>{formData.name}</strong>! We've simulated your registration for <strong>{registeringEvent.title}</strong>.
+                <p className="text-xs sm:text-sm text-forest/75 max-w-xs mx-auto">
+                  Thank you, <strong>{formData.name}</strong>. Your registration for <strong>{registeringEvent.title}</strong> is noted.
                 </p>
-                <div className="p-3 rounded-xl bg-cream border border-cream-border text-[11px] font-mono text-emerald-700">
+                <div className="p-3 rounded-xl bg-cream border border-cream-border text-xs font-mono text-emerald-700">
                   Venue: {registeringEvent.venue} · {registeringEvent.date}
                 </div>
                 <button
@@ -422,7 +436,7 @@ export default function Events() {
                   className="w-full py-2.5 rounded-xl bg-forest-deep text-white text-xs font-mono font-bold"
                   style={{ minHeight: '44px' }}
                 >
-                  DONE
+                  CLOSE
                 </button>
               </div>
             )}

@@ -11,7 +11,7 @@ export default function SectionHeading({
   sampleDisclaimer = null
 }) {
   return (
-    <div className={`mb-12 md:mb-16 ${center ? 'text-center max-w-3xl mx-auto' : 'max-w-2xl'}`}>
+    <div className={`mb-10 md:mb-14 ${center ? 'text-center max-w-3xl mx-auto' : 'max-w-2xl'}`}>
       {badge && (
         <div className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-mono font-semibold tracking-wider uppercase mb-3 ${
           dark
@@ -23,7 +23,7 @@ export default function SectionHeading({
         </div>
       )}
 
-      <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight leading-tight ${
+      <h2 className={`heading-section font-display font-bold tracking-tight ${
         dark ? 'text-white' : 'text-forest'
       }`}>
         {title}{' '}
@@ -35,7 +35,7 @@ export default function SectionHeading({
       </h2>
 
       {description && (
-        <p className={`mt-4 text-base sm:text-lg leading-relaxed ${
+        <p className={`mt-3 text-base sm:text-lg leading-relaxed max-w-[70ch] mx-auto line-clamp-2 ${
           dark ? 'text-gray-300' : 'text-forest/75'
         }`}>
           {description}
@@ -43,7 +43,7 @@ export default function SectionHeading({
       )}
 
       {sampleDisclaimer && (
-        <div className="mt-4 flex justify-center">
+        <div className="mt-3.5 flex justify-center">
           <SampleBadge text={sampleDisclaimer} dark={dark} />
         </div>
       )}

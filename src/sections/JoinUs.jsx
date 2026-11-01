@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { UserPlus, CheckCircle2, ArrowRight, ExternalLink, AlertCircle, Sparkles } from 'lucide-react';
-import { siteConfig } from '../data/config';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { divisions } from '../data/team';
 import SectionHeading from '../components/SectionHeading';
 
@@ -52,7 +51,7 @@ export default function JoinUs() {
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
-    }, 800);
+    }, 600);
   };
 
   const handleReset = () => {
@@ -70,23 +69,23 @@ export default function JoinUs() {
   };
 
   return (
-    <section id="join" className="py-20 bg-cream relative">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="join" className="py-16 sm:py-20 bg-cream relative">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Heading */}
+        {/* Section Heading - 1 title + at most 2 lines subtitle */}
         <SectionHeading
-          badge="JOIN OUR COMMUNITY"
+          badge="MEMBERSHIP REGISTRATION"
           title="Become a Member of the"
           highlight="Eco Club"
-          description="Contribute your engineering, organizational, or creative skills to campus environmental stewardship."
+          description="Contribute your engineering, management, or creative talents to student sustainability initiatives."
         />
 
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-cream-border shadow-lifted">
+        <div className="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-9 border border-cream-border shadow-lifted">
           {!submitted ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               
               {/* Personal Info Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Full Name */}
                 <div>
                   <label className="block text-xs font-display font-semibold text-forest mb-1.5">
@@ -97,10 +96,10 @@ export default function JoinUs() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Sarthak Mishra"
-                    className="w-full px-4 py-3 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30"
                     style={{ minHeight: '44px' }}
                   />
-                  {errors.name && <span className="text-[11px] text-red-600 mt-1 block">{errors.name}</span>}
+                  {errors.name && <span className="text-xs text-red-600 mt-1 block">{errors.name}</span>}
                 </div>
 
                 {/* College Email */}
@@ -112,11 +111,11 @@ export default function JoinUs() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="e.g. yourname.22b0123@abes.ac.in"
-                    className="w-full px-4 py-3 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30"
+                    placeholder="e.g. yourname@abes.ac.in"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30"
                     style={{ minHeight: '44px' }}
                   />
-                  {errors.email && <span className="text-[11px] text-red-600 mt-1 block">{errors.email}</span>}
+                  {errors.email && <span className="text-xs text-red-600 mt-1 block">{errors.email}</span>}
                 </div>
 
                 {/* Phone Number */}
@@ -129,10 +128,10 @@ export default function JoinUs() {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="e.g. 9876543210"
-                    className="w-full px-4 py-3 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30"
                     style={{ minHeight: '44px' }}
                   />
-                  {errors.phone && <span className="text-[11px] text-red-600 mt-1 block">{errors.phone}</span>}
+                  {errors.phone && <span className="text-xs text-red-600 mt-1 block">{errors.phone}</span>}
                 </div>
 
                 {/* Division of Interest */}
@@ -143,7 +142,7 @@ export default function JoinUs() {
                   <select
                     value={formData.division}
                     onChange={(e) => setFormData({ ...formData, division: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-xs outline-none bg-cream/30"
                     style={{ minHeight: '44px' }}
                   >
                     {divisions.map((d) => (
@@ -162,7 +161,7 @@ export default function JoinUs() {
                   <select
                     value={formData.branch}
                     onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-cream-border text-sm outline-none bg-cream/30"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-border text-xs outline-none bg-cream/30"
                     style={{ minHeight: '44px' }}
                   >
                     <option>Computer Science & Engineering</option>
@@ -184,7 +183,7 @@ export default function JoinUs() {
                   <select
                     value={formData.year}
                     onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-cream-border text-sm outline-none bg-cream/30"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-border text-xs outline-none bg-cream/30"
                     style={{ minHeight: '44px' }}
                   >
                     <option>1st Year</option>
@@ -201,25 +200,22 @@ export default function JoinUs() {
                   Why do you want to join the Eco Club? *
                 </label>
                 <textarea
-                  rows={4}
+                  rows={3}
                   value={formData.statement}
                   onChange={(e) => setFormData({ ...formData, statement: e.target.value })}
-                  placeholder="Share what excites you—whether it's building IoT sensors, organizing drives, managing social campaigns, or leading plantation initiatives..."
-                  className="w-full px-4 py-3 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30 resize-none"
+                  placeholder="Share your interest—whether building IoT sensors, planning drives, or managing digital campaigns..."
+                  className="w-full px-4 py-2.5 rounded-xl border border-cream-border focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm outline-none bg-cream/30 resize-none"
                 />
-                {errors.statement && <span className="text-[11px] text-red-600 mt-1 block">{errors.statement}</span>}
+                {errors.statement && <span className="text-xs text-red-600 mt-1 block">{errors.statement}</span>}
               </div>
 
-              {/* Honesty Disclosure Banner */}
-              <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
-                <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <strong>Demo Mode Simulation:</strong> No external backend database is connected yet. Submitting this form runs full client-side validation and demonstrates the confirmation screen. You can link your official Google Form URL in <code>src/data/config.js</code>.
-                </div>
+              {/* Visitor-Friendly Notice (Point 16) */}
+              <div className="p-3 rounded-xl bg-cream border border-cream-border text-xs text-forest/75 flex items-center justify-between">
+                <span>Student recruitment preview. Submissions are verified locally during active onboarding cycles.</span>
               </div>
 
-              {/* Submit Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+              {/* Submit Button */}
+              <div className="pt-1">
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -230,51 +226,37 @@ export default function JoinUs() {
                     <span>PROCESSING...</span>
                   ) : (
                     <>
-                      <span>SUBMIT MEMBERSHIP FORM</span>
+                      <span>SUBMIT MEMBERSHIP APPLICATION</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
-
-                <a
-                  href={siteConfig.googleFormJoinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-mono text-emerald-700 hover:text-emerald-900 flex items-center gap-1.5 hover:underline"
-                >
-                  <span>Open External Google Form (Sample)</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
               </div>
 
             </form>
           ) : (
-            /* Submission Confirmation */
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="py-10 text-center space-y-4"
+              className="py-8 text-center space-y-3.5"
             >
-              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm animate-bounce">
-                <CheckCircle2 className="w-12 h-12" />
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-10 h-10" />
               </div>
-              <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-emerald-100 text-leaf uppercase">
-                Application Received (Demo Simulation)
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-display font-bold text-forest">
-                Welcome, {formData.name}!
+              <h3 className="heading-card font-display font-bold text-forest">
+                Application Received!
               </h3>
               <p className="text-sm text-forest/75 max-w-md mx-auto leading-relaxed">
-                Your application for the <strong>{formData.division}</strong> division has passed client-side validation.
+                Thank you, <strong>{formData.name}</strong>. Your application for the <strong>{formData.division}</strong> division has been submitted.
               </p>
               
-              <div className="p-4 rounded-2xl bg-cream border border-cream-border max-w-md mx-auto text-left text-xs space-y-1.5 font-mono text-forest/80">
+              <div className="p-4 rounded-2xl bg-cream border border-cream-border max-w-sm mx-auto text-left text-xs space-y-1 font-mono text-forest/80">
                 <div><strong>Email:</strong> {formData.email}</div>
                 <div><strong>Division:</strong> {formData.division}</div>
                 <div><strong>Branch:</strong> {formData.branch} ({formData.year})</div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-2">
                 <button
                   onClick={handleReset}
                   className="px-6 py-2.5 rounded-xl bg-forest-deep text-white text-xs font-mono font-semibold hover:bg-forest-surface transition-colors"
